@@ -1,0 +1,61 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    doodba.domain.main: ""
+    kompose.cmd: kompose -f prod.yaml convert
+    kompose.version: 1.26.0 (40646f47)
+    traefik.backend.buffering.retryExpression: IsNetworkError() && Attempts() < 5
+    traefik.docker.network: inverseproxy_shared
+    traefik.frontend.passHostHeader: "true"
+    traefik.port: "8069"
+  creationTimestamp: null
+  labels:
+    io.kompose.service: odoo
+  name: odoo
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      io.kompose.service: odoo
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      annotations:
+        doodba.domain.main: ""
+        kompose.cmd: kompose -f prod.yaml convert
+        kompose.version: 1.26.0 (40646f47)
+        traefik.backend.buffering.retryExpression: IsNetworkError() && Attempts() < 5
+        traefik.docker.network: inverseproxy_shared
+        traefik.frontend.passHostHeader: "true"
+        traefik.port: "8069"
+      creationTimestamp: null
+      labels:
+        io.kompose.service: odoo
+    spec:
+      containers:
+        - env:
+            - name: ADMIN_PASSWORD
+              value: example-admin-password
+            - name: DB_FILTER
+              value: ^prod
+            - name: DOODBA_ENVIRONMENT
+              value: prod
+            - name: INITIAL_LANG
+              value: en_US
+            - name: PGPASSWORD
+              value: example-db-password
+          image: odoo
+          name: odoo
+          resources: {}
+          tty: true
+          volumeMounts:
+            - mountPath: /var/lib/odoo
+              name: filestore
+      restartPolicy: Always
+      volumes:
+        - name: filestore
+          persistentVolumeClaim:
+            claimName: filestore
+status: {}
