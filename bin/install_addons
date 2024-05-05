@@ -1,0 +1,4 @@
+#!/bin/bash
+
+# why use -x ? it gives you an error if an addon is not found, this is helpful for debugging why an addon is not installing in the image, maybe there is a typo in the name :)
+docker compose run --rm odoo addons init -x --with auth_oicd
