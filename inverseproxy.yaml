@@ -1,0 +1,73 @@
+version: "2.1"
+
+services:
+  proxy:
+    image: "traefik:v2.10"
+    container_name: "traefik"
+    env_file: .env
+    environment:
+      - UID=2000
+      - GID=2000
+    ports:
+      - "80:80"
+      - "443:443"
+    command:
+      - --api.dashboard=true
+      - --log.level=INFO
+      # maybe enable this one day, with a volume
+      #- --log.filepath=/var/log/traefik.log
+      # - --accesslog=true
+      # - --accesslog.format=json
+      # - --accesslog.fields.headers.defaultmode=keep
+      # - --accesslog.filepath=/var/log/traefik-access.log
+      - --providers.docker=true
+      - --providers.docker.exposedbydefault=false
+      # - --providers.file.filename=/dynamic.yml
+
+      # NOTE: *************** THE NETWORK NAME HERE MUST BE CHANGED *************
+      - --providers.docker.network=inverseproxy_shared
+
+      # - --certificatesresolvers.le.acme.httpchallenge=true
+      # - --certificatesresolvers.le.acme.httpchallenge.entrypoint=web
+      # - --certificatesresolvers.le.acme.email=${LETS_ENCRYPT_CONTACT_EMAIL}
+      # - --certificatesresolvers.le.acme.tlschallenge=true
+      # - --certificatesresolvers.le.acme.storage=/letsencrypt/acme.json
+      # by default redirect http to https for all, see: https://github.com/bluepuma77/traefik-best-practice
+      #
+      # - --entrypoints.web.address=:80
+      # - --entrypoints.web.http.redirections.entrypoint.to=websecure
+      # - --entryPoints.web.http.redirections.entrypoint.scheme=https
+      # - --entrypoints.websecure.address=:443
+      # - --entrypoints.websecure.http.tls.certresolver=le
+
+    networks:
+      - shared
+      - private
+      - public
+    volumes:
+      # - "${BASE_VOLUME_DIR}/traefik/conf/letsencrypt:/letsencrypt"
+      # - "${BASE_VOLUME_DIR}/traefik/conf/dynamic.yml:/dynamic.yml"
+      - "/var/run/docker.sock:/var/run/docker.sock:ro"
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.traefik-dashboard.rule=Host(`${TRAEFIK_HOSTNAME}`)
+      - traefik.http.routers.traefik-dashboard.service=api@internal
+      - traefik.http.routers.traefik-dashboard.middlewares=gzip
+      # - traefik.http.middlewares.dashboard-auth.basicauth.users=a.mustafa@ewady.com:$$apr1$$Jc9P2x6V$$T/ZCVOqrZ4h/HpSmgpItm.
+      - traefik.http.middlewares.gzip.compress=true
+
+networks:
+  shared:
+    internal: true
+    driver_opts:
+      encrypted: 1
+
+  private:
+    internal: true
+    driver_opts:
+      encrypted: 1
+
+  public:
+
+volumes:
+  acme:
