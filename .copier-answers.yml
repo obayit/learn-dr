@@ -5,7 +5,7 @@ backup_dst: ""
 cidr_whitelist: null
 domains_prod: {}
 domains_test: {}
-gitlab_url: ""
+gitlab_url: https://gitlab.com/obay/learn-dr
 odoo_dbfilter: ^prod
 odoo_initial_lang: en_US
 odoo_listdb: false
