@@ -1,7 +1,6 @@
 # Changes here will be overwritten by Copier; NEVER EDIT MANUALLY
 _commit: v6.1.5
-#_src_path: gh:Tecnativa/doodba-copier-template
-_src_path: /home/obayit/src/doodba/doodba-copier-template
+_src_path: gh:Tecnativa/doodba-copier-template
 backup_dst: ""
 cidr_whitelist: null
 domains_prod: {}
