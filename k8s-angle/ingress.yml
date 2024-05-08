@@ -1,0 +1,37 @@
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: odoo-web-ingress-route
+  namespace: odoo
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: |
+        Host(`learn-dr.bughunter.local`)
+      kind: Rule
+      middlewares:
+      services:
+        - name: odoo-web-service
+          port: 8069
+  tls:
+    certResolver: letsencrypt
+---
+apiVersion: traefik.containo.us/v1alpha1
+kind: IngressRoute
+metadata:
+  name: odoo-longpolling-ingress-route
+  namespace: odoo
+spec:
+  entryPoints:
+    - websecure
+  routes:
+    - match: |
+        Host(`learn-dr.bughunter.local`) && PathPrefix(`/longpolling/`)
+      kind: Rule
+      middlewares:
+      services:
+        - name: odoo-web-service
+          port: 8072
+  tls:
+    certResolver: letsencrypt

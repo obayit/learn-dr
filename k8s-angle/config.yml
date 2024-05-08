@@ -1,0 +1,38 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: odoo-conf
+  namespace: odoo
+data:
+  web: |
+    [options]
+    server_wide_modules = web
+
+    max_cron_threads = 0
+    workers = 4
+    longpolling_port = 8072
+  queue: |
+    [options]
+    server_wide_modules = queue_job
+    workers = 4
+    max_cron_threads = 1
+
+    [queue_job]
+    channels = root:4
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: odoo-env
+  namespace: odoo
+data:
+  PGHOST: db
+  PGPORT: "5432"
+  PGUSER: "odoo"
+  PGDATABASE: "prod"
+  PROXY_MODE: "true"
+  WITHOUT_DEMO: "true"
+  SMTP_SERVER: ""
+  SMTP_PORT: ""
+  SMTP_USER: ""
+  SMTP_SSL: ""

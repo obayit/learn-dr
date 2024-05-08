@@ -1,0 +1,4 @@
+# queue.yml would largely be a duplicate of the web.yml,
+# just with a different deployment name, restricted to
+# 1 replica and a different set of configs
+# You could do the same with the longpolling

@@ -1,0 +1,107 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: odoo-web
+  namespace: odoo
+spec:
+  selector:
+    matchLabels:
+      app: odoo-web
+  template:
+    metadata:
+      labels:
+        app: odoo-web
+    spec:
+      # imagePullSecrets:
+      #   - name: "????"
+      containers:
+        - name: odoo-web
+          image: "learn-dr-odoo:latest"
+          imagePullPolicy: Always
+          env:
+            - name: PGHOST
+              valueFrom:
+                configMapKeyRef:
+                  name: odoo-env
+                  key: PGHOST
+            - name: PGPORT
+              valueFrom:
+                configMapKeyRef:
+                  name: odoo-env
+                  key: PGPORT
+            - name: PGUSER
+              valueFrom:
+                configMapKeyRef:
+                  name: odoo-env
+                  key: PGUSER
+            - name: PGPASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: odoo-secret
+                  key: PGPASSWORD
+            - name: ADMIN_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: odoo-secret
+                  key: ADMIN_PASSWORD
+            - name: PROXY_MODE
+              valueFrom:
+                configMapKeyRef:
+                  name: odoo-env
+                  key: PROXY_MODE
+            - name: WITHOUT_DEMO
+              valueFrom:
+                configMapKeyRef:
+                  name: odoo-env
+                  key: WITHOUT_DEMO
+            - name: LIST_DB
+              valueFrom:
+                configMapKeyRef:
+                  name: odoo-env
+                  key: LIST_DB
+            - name: SMTP_SERVER
+              valueFrom:
+                configMapKeyRef:
+                  name: odoo-env
+                  key: SMTP_SERVER
+            - name: SMTP_PORT
+              valueFrom:
+                configMapKeyRef:
+                  name: odoo-env
+                  key: SMTP_PORT
+            - name: SMTP_USER
+              valueFrom:
+                configMapKeyRef:
+                  name: odoo-env
+                  key: SMTP_USER
+            - name: SMTP_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: odoo-secret
+                  key: SMTP_PASSWORD
+            - name: SMTP_SSL
+              valueFrom:
+                configMapKeyRef:
+                  name: odoo-env
+                  key: SMTP_SSL
+            - name: PGDATABASE
+              valueFrom:
+                configMapKeyRef:
+                  name: odoo-env
+                  key: PGDATABASE
+          volumeMounts:
+            - name: vol-odoo
+              mountPath: /var/lib/odoo
+            - name: vol-conf
+              mountPath: "/opt/odoo/custom/conf.d/"
+              readOnly: true
+      volumes:
+        - name: vol-odoo
+          persistentVolumeClaim:
+            claimName: odoo-pvc
+        - name: vol-conf
+          configMap:
+            name: odoo-conf
+            items:
+              - key: "web"
+                path: "61-web.conf"
