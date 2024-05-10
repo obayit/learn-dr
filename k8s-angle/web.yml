@@ -16,7 +16,7 @@ spec:
       #   - name: "????"
       containers:
         - name: odoo-web
-          image: "learn-dr-odoo:latest"
+          image: "192.168.1.101:5000/odoo"
           imagePullPolicy: Always
           env:
             - name: PGHOST

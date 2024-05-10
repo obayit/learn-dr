@@ -32,6 +32,7 @@ data:
   PGDATABASE: "prod"
   PROXY_MODE: "true"
   WITHOUT_DEMO: "true"
+  LIST_DB: "false"
   SMTP_SERVER: ""
   SMTP_PORT: ""
   SMTP_USER: ""
