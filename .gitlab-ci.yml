@@ -1,0 +1,10 @@
+default:
+  image: docker:24.0.5
+  before_script:
+    - docker info
+
+build:
+  stage: build
+  script:
+    - docker build -t learn-dr:latest --build-arg="ODOO_VERSION=17.0" ./odoo
+    - docker push learn-dr:latest
