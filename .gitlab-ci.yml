@@ -1,7 +1,8 @@
-default:
-  image: docker:24.0.5
-  before_script:
-    - docker info
+image: docker:latest
+services:
+  - "docker:dind"
+before_script:
+  - docker info
 
 build:
   stage: build
