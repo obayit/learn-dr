@@ -17,8 +17,45 @@ services:
       - db
     networks:
       default:
+      inverseproxy_shared:
     labels:
-      doodba.domain.main: ""
+      - doodba.domain.main=""
+      - traefik.enable=true
+      # source: https://github.com/wbsouza/traefik-odoo
+      #----------------------------------------------- routers for: odoo --------------------------------------------------
+      # https
+      - traefik.http.routers.odoo-${NAME}-https.rule=Host(`${ODOO_HOSTNAME}`)
+      - traefik.http.routers.odoo-${NAME}-https.service=odoo-${NAME}
+      - traefik.http.routers.odoo-${NAME}-https.middlewares=cors,sslheader,gzip,limit
+      #---------------------------------------- routes for: odoo/websocket ------------------------------------------------
+      # https
+      - traefik.http.routers.websocket-${NAME}https.rule=Host(`${ODOO_HOSTNAME}`) &&
+        (PathPrefix(`/websocket`))
+      - traefik.http.routers.websocket-${NAME}https.service=websocket-${NAME}
+      - traefik.http.routers.websocket-${NAME}https.middlewares=cors,gzip,sslheader,limit,upgradeheader
+
+      #====================================================== services ===========================================================
+      - traefik.http.services.odoo-${NAME}.loadbalancer.server.port=8069
+      - traefik.http.services.websocket-${NAME}.loadbalancer.server.port=8072
+
+      #===================================================== middlewares =========================================================
+      - traefik.http.middlewares.gzip.compress=true
+      - traefik.http.middlewares.sslheader.headers.customrequestheaders.X-Forwarded-Proto=https
+      - traefik.http.middlewares.limit.buffering.memRequestBodyBytes=20971520
+      - traefik.http.middlewares.limit.buffering.maxRequestBodyBytes=20971520
+      # upgrade headers for websocket
+      - "traefik.http.middlewares.upgradeheader.headers.customRequestHeaders.Upgrade=websocket"
+      - "traefik.http.middlewares.upgradeheader.headers.customRequestHeaders.Connection=upgrade"
+      - "traefik.http.middlewares.upgradeheader.headers.hostsproxyheaders=websocket,Upgrade"
+      - "traefik.http.middlewares.upgradeheader.headers.forcestsheader=true"
+
+      # flutter portal (cors) sauce: https://doc.traefik.io/traefik/v2.10/middlewares/http/headers/#cors-headers
+      - "traefik.http.middlewares.cors.headers.accesscontrolallowmethods=GET,OPTIONS,PUT,POST"
+      - "traefik.http.middlewares.cors.headers.accessControlAllowCredentials=true"
+      - "traefik.http.middlewares.cors.headers.accesscontrolallowheaders=*"
+      - "traefik.http.middlewares.cors.headers.accesscontrolalloworiginlist=*"
+      - "traefik.http.middlewares.cors.headers.accesscontrolmaxage=100"
+      - "traefik.http.middlewares.cors.headers.addvaryheader=true"
 
   db:
     extends:
