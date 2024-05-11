@@ -23,6 +23,6 @@ jobs:
         with:
           push: true
           tags: ubayit/learn-dr:17.0
-          context: odoo
+          context: ./odoo
           build-args: |
             ODOO_VERSION:17.0
