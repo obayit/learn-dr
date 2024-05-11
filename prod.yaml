@@ -19,7 +19,7 @@ services:
       default:
       inverseproxy_shared:
     labels:
-      - doodba.domain.main=""
+      - doodba.domain.main="${ODOO_HOSTNAME}"
       - traefik.enable=true
       # source: https://github.com/wbsouza/traefik-odoo
       #----------------------------------------------- routers for: odoo --------------------------------------------------

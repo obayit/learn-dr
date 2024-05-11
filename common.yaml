@@ -9,8 +9,6 @@ services:
         ODOO_VERSION: "17.0"
         UID: "${UID:-1000}"
         GID: "${GID:-1000}"
-        FONT_SERIF: "Oldania-Std"
-        FONT_SANS: "Verana-Regular"
     environment:
       EMAIL_FROM: ""
       PGDATABASE: &dbname prod
