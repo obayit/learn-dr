@@ -9,7 +9,7 @@ gitlab_url: https://gitlab.com/obay/learn-dr
 odoo_dbfilter: ^prod
 odoo_initial_lang: en_US
 odoo_listdb: false
-odoo_oci_image: ""
+odoo_oci_image: 192.168.1.101:5000/odoo
 odoo_proxy: traefik
 odoo_version: 17.0
 paths_without_crawlers:
